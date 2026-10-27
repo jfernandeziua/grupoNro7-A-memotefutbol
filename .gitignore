@@ -1,0 +1,16 @@
+# Compilados
+*.o
+juego
+juego.exe
+juego.dSYM/
+
+# Datos locales de cada jugador
+ranking.txt
+
+# macOS
+.DS_Store
+
+# VS Code: solo se comparten estos dos archivos (el resto tiene rutas de cada PC)
+.vscode/*
+!.vscode/settings.json
+!.vscode/c_cpp_properties.json

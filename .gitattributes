@@ -1,0 +1,6 @@
+# Evita problemas de saltos de linea entre Windows y Mac/Linux
+* text=auto
+*.c text eol=lf
+*.h text eol=lf
+Makefile text eol=lf
+*.png binary
