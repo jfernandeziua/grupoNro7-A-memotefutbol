@@ -44,3 +44,20 @@ void liberar_sonidos(Juego *j) {
     liberar_cola(&j->cola);
 }
 
+/* Los sonidos no se reproducen directo: se encolan (FIFO) para que
+   no se pisen entre si cuando pasan varios eventos juntos. */
+void pedir_sonido(Juego *j, int tipo) {
+    if (j == NULL || tipo < 0 || tipo >= CANT_SND) return;
+    encolar(&j->cola, tipo);
+}
+
+/* Se llama una vez por frame: si el sonido anterior termino,
+   saca el siguiente de la cola y lo reproduce. */
+void procesar_sonidos(Juego *j) {
+    int tipo;
+    if (j == NULL) return;
+    if (j->sonando >= 0 && IsSoundPlaying(j->snd[j->sonando])) return;
+    tipo = desencolar(&j->cola);
+    j->sonando = tipo;
+    if (tipo >= 0) PlaySound(j->snd[tipo]);
+}
