@@ -401,3 +401,80 @@ static void actualizar_partida(Juego *j)
     if (j->espera == 0 && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         manejar_clic(j);
 }
+
+/* ================= Ciclo de vida ================= */
+
+void iniciar_juego(Juego *j)
+{
+
+    if (j == NULL)
+        return;
+
+    *j = (Juego){.pantalla = PANT_MENU, .dif = 1, .jug = 1, .f1 = -1, .f2 = -1, .sonando = -1};
+
+    InitWindow(W, H, "MemoteFutbol");
+
+    InitAudioDevice();
+
+    SetExitKey(KEY_NULL); /* ESC no cierra la ventana: se usa para volver al menu */
+
+    SetTargetFPS(60);
+
+    cargar_sonidos(j);
+
+    cargar_imagenes(j);
+
+    cargar_ranking(&j->ranking);
+
+    inicializar_tablero(j);
+}
+
+void actualizar_juego(Juego *j)
+{
+
+    if (j == NULL)
+        return;
+
+    if (IsKeyPressed(KEY_M) && !escribiendo_nombre(j))
+
+        SetMasterVolume((j->mudo = !j->mudo) ? 0 : 1);
+
+    switch (j->pantalla)
+    {
+
+    case PANT_MENU:
+        actualizar_menu(j);
+        break;
+
+    case PANT_RANKING:
+        actualizar_ranking(j);
+        break;
+
+    case PANT_JUEGO:
+        actualizar_partida(j);
+        break;
+    }
+
+    procesar_sonidos(j);
+}
+
+/* Libera toda la memoria dinamica antes de salir (sin fugas) */
+
+void cerrar_juego(Juego *j)
+{
+
+    if (j == NULL)
+        return;
+
+    liberar_sonidos(j);
+
+    liberar_imagenes(j);
+
+    liberar_pila(&j->pila);
+
+    liberar_lista(&j->ranking);
+
+    CloseAudioDevice();
+
+    CloseWindow();
+}
