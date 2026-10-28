@@ -129,3 +129,42 @@ static void dibujar_ranking(const Juego *j) {
         centrar_texto("Todavia no hay partidas guardadas", (Rectangle){0, 200, W, 40}, 24, LIGHTGRAY);
     centrar_texto("1/2/3: dificultad     ESC: volver", (Rectangle){0, H - 70, W, 30}, 20, LIGHTGRAY);
 }
+
+/* ================= Victoria ================= */
+static void dibujar_confetti(const Juego *j) {
+    for (int k = 0; k < MAX_CONF; k++)
+        DrawRectangle((int)j->conf[k].x, (int)j->conf[k].y, 6, 10, j->conf[k].c);
+}
+
+static void dibujar_victoria(const Juego *j) {
+    const char *t1, *t2 = "R: repetir   ESC: menu";
+    if (j->jug == 2)
+        t1 = (j->pts[0] == j->pts[1]) ? "EMPATE" : (j->pts[0] > j->pts[1] ? "GANA J1" : "GANA J2");
+    else if (!j->guardado) {
+        t1 = TextFormat("Ganaste en %d intentos! Nombre: %s_", j->intentos, j->nombre);
+        t2 = "Escribi tu nombre y apreta ENTER";
+    } else
+        t1 = TextFormat("Ganaste en %d intentos y %ds%s", j->intentos, (int)j->t,
+                        j->nuevo ? " - NUEVO RECORD!" : "");
+    DrawRectangle(0, H / 2 - 55, W, 110, Fade(BLACK, .8f));
+    centrar_texto(t1, (Rectangle){0, H / 2 - 55, W, 70}, 24, GOLD);
+    centrar_texto(t2, (Rectangle){0, H / 2 + 10, W, 40}, 18, RAYWHITE);
+}
+
+/* ================= Punto de entrada del dibujado ================= */
+void dibujar_juego(const Juego *j) {
+    if (j == NULL) return;
+    BeginDrawing();
+    dibujar_fondo();
+    if (j->pantalla == PANT_MENU) dibujar_menu(j);
+    else if (j->pantalla == PANT_RANKING) dibujar_ranking(j);
+    else {
+        dibujar_hud(j);
+        dibujar_tablero(j);
+        if (j->aciertos == j->filas * j->cols / 2) {
+            dibujar_confetti(j);
+            dibujar_victoria(j);
+        }
+    }
+    EndDrawing();
+}
