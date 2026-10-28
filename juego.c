@@ -273,3 +273,131 @@ static void deshacer_movimiento(Juego *j)
 
     j->espera = 0;
 }
+
+/* ================= Pantallas ================= */
+
+static void actualizar_menu(Juego *j)
+{
+
+    if (IsKeyPressed(KEY_ESCAPE))
+        j->salir = 1;
+
+    for (int k = 0; k < 3; k++)
+
+        if (IsKeyPressed(KEY_ONE + k))
+            j->dif = k;
+
+    if (IsKeyPressed(KEY_P))
+        j->jug = 3 - j->jug; /* alterna entre 1 y 2 */
+
+    if (IsKeyPressed(KEY_T))
+        j->pantalla = PANT_RANKING;
+
+    if (IsKeyPressed(KEY_ENTER))
+    {
+
+        j->pantalla = PANT_JUEGO;
+
+        reiniciar_partida(j);
+    }
+}
+
+static void actualizar_ranking(Juego *j)
+{
+
+    for (int k = 0; k < 3; k++)
+
+        if (IsKeyPressed(KEY_ONE + k))
+            j->dif = k;
+
+    if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_ENTER))
+        j->pantalla = PANT_MENU;
+}
+
+/* Guarda el resultado en la lista y en el archivo */
+
+static void guardar_resultado(Juego *j)
+{
+
+    int mejor = mejor_de(j->ranking, j->dif);
+
+    j->nuevo = (mejor == 0 || j->intentos < mejor);
+
+    if (insertar_ranking(&j->ranking, j->nombre, j->dif, j->intentos))
+
+        guardar_ranking(j->ranking);
+
+    j->guardado = 1;
+}
+
+/* Partida ganada: mueve el confetti y, en 1 jugador, pide el nombre */
+
+static void actualizar_final(Juego *j)
+{
+
+    int ch;
+
+    for (int k = 0; k < MAX_CONF; k++)
+    {
+
+        j->conf[k].y += j->conf[k].v;
+
+        if (j->conf[k].y > H)
+            j->conf[k].y = -10;
+    }
+
+    if (j->guardado)
+        return;
+
+    while ((ch = GetCharPressed()) > 0)
+
+        if (ch > 32 && ch < 127 && j->largo < NOMBRE_MAX - 1)
+        {
+
+            j->nombre[j->largo++] = (char)ch;
+
+            j->nombre[j->largo] = '\0';
+        }
+
+    if (IsKeyPressed(KEY_BACKSPACE) && j->largo > 0)
+        j->nombre[--j->largo] = '\0';
+
+    if (IsKeyPressed(KEY_ENTER) && j->largo > 0)
+        guardar_resultado(j);
+}
+
+static void actualizar_partida(Juego *j)
+{
+
+    if (IsKeyPressed(KEY_ESCAPE))
+    {
+
+        j->pantalla = PANT_MENU;
+
+        return;
+    }
+
+    if (IsKeyPressed(KEY_R) && !escribiendo_nombre(j))
+        reiniciar_partida(j);
+
+    animar_cartas(j);
+
+    if (partida_ganada(j))
+    {
+
+        actualizar_final(j);
+
+        return;
+    }
+
+    j->t += GetFrameTime();
+
+    if (IsKeyPressed(KEY_Z))
+        deshacer_movimiento(j);
+
+    if (j->espera > 0 && --j->espera == 0)
+        ocultar_seleccion(j);
+
+    if (j->espera == 0 && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        manejar_clic(j);
+}
