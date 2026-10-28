@@ -88,3 +88,44 @@ static void dibujar_tablero(const Juego *j) {
         for (int col = 0; col < j->cols; col++)
             dibujar_carta(j, f, col);
 }
+
+/* ================= Interfaz ================= */
+static void dibujar_hud(const Juego *j) {
+    int mejor = mejor_de(j->ranking, j->dif);
+    DrawRectangle(0, 0, W, TOP - 10, Fade(BLACK, .4f));
+    if (j->jug == 1)
+        DrawText(TextFormat("Intentos: %d   Tiempo: %ds   Puntos: %d   Racha: x%d   Mejor: %s",
+                            j->intentos, (int)j->t, j->pts[0], j->racha,
+                            mejor ? TextFormat("%d", mejor) : "-"), 15, 8, 18, RAYWHITE);
+    else
+        DrawText(TextFormat("J1: %d   J2: %d   Turno: J%d   Racha: x%d",
+                            j->pts[0], j->pts[1], j->turno + 1, j->racha), 15, 8, 18, RAYWHITE);
+    DrawText("Z: deshacer   R: reiniciar   ESC: menu", 15, 36, 14, LIGHTGRAY);
+}
+
+static void dibujar_menu(const Juego *j) {
+    const char *niv[] = {"1 - Facil (3x4)", "2 - Medio (4x4)", "3 - Dificil (4x6)"};
+    centrar_texto("MEMOTEFUTBOL", (Rectangle){0, 70, W, 60}, 56, GOLD);
+    for (int k = 0; k < 3; k++)
+        centrar_texto(niv[k], (Rectangle){0, 190 + k * 40, W, 36}, 26, (k == j->dif) ? GOLD : RAYWHITE);
+    centrar_texto(TextFormat("P - Jugadores: %d", j->jug), (Rectangle){0, 330, W, 36}, 26, RAYWHITE);
+    centrar_texto("T: ranking     M: sonido", (Rectangle){0, 410, W, 30}, 20, LIGHTGRAY);
+    centrar_texto("ENTER: jugar     ESC: salir", (Rectangle){0, 440, W, 30}, 20, LIGHTGRAY);
+}
+
+/* Muestra los mejores TOP_RANKING de la dificultad elegida (recorre la lista) */
+static void dibujar_ranking(const Juego *j) {
+    const char *niv[] = {"Facil", "Medio", "Dificil"};
+    const NodoLista *p;
+    int n = 0;
+    centrar_texto(TextFormat("RANKING - %s", niv[j->dif]), (Rectangle){0, 50, W, 50}, 40, GOLD);
+    for (p = j->ranking; p != NULL && n < TOP_RANKING; p = p->sig) {
+        if (p->dif != j->dif) continue;
+        centrar_texto(TextFormat("%d. %s - %d intentos", n + 1, p->nombre, p->intentos),
+                      (Rectangle){0, 140 + n * 45, W, 40}, 26, RAYWHITE);
+        n++;
+    }
+    if (n == 0)
+        centrar_texto("Todavia no hay partidas guardadas", (Rectangle){0, 200, W, 40}, 24, LIGHTGRAY);
+    centrar_texto("1/2/3: dificultad     ESC: volver", (Rectangle){0, H - 70, W, 30}, 20, LIGHTGRAY);
+}
