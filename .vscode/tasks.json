@@ -5,6 +5,13 @@
             "label": "Build with Make",
             "type": "shell",
             "command": "make",
+            "windows": {
+                "options": {
+                    "env": {
+                        "PATH": "C:\\msys64\\ucrt64\\bin;C:\\msys64\\usr\\bin;${env:PATH}"
+                    }
+                }
+            },
             "args": [],
             "group": {
                 "kind": "build",
