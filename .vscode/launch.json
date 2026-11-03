@@ -2,19 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run (Mac)",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/juego",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb",
-            "preLaunchTask": "Build with Make"
-        },
-        {
             "name": "Run (Windows)",
             "type": "cppdbg",
             "request": "launch",
@@ -25,6 +12,20 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
+            "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
+            "preLaunchTask": "Build with Make"
+        },
+        {
+            "name": "Run (Mac)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/juego",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
             "preLaunchTask": "Build with Make"
         }
     ]
