@@ -30,8 +30,8 @@ Desde VS Code también funciona el botón de la extensión Code Runner (usa `mak
 | Pantalla | Teclas |
 |---|---|
 | Menú | `1` `2` `3` dificultad, `P` jugadores, `T` ranking, `ENTER` jugar, `ESC` salir |
-| Partida | clic para voltear, `Z` deshacer, `R` reiniciar, `ESC` menú |
-| General | `M` silenciar |
+| Partida | clic para voltear, `Z` deshacer, `R` reiniciar, `P` pausa, `ESC` menú |
+| General | `M` silenciar, `F` / `F11` pantalla completa |
 
 ## Estructura del proyecto
 

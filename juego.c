@@ -9,6 +9,16 @@ Rectangle rect_carta(const Juego *j, int f, int col) {
     return (Rectangle){x0 + col * (CW + GAP), y0 + f * (CH + GAP), CW, CH};
 }
 
+Vector2 posicion_mouse(void) {
+    Vector2 m = GetMousePosition();
+    float sw = (float)GetScreenWidth();
+    float sh = (float)GetScreenHeight();
+    float scale = fminf(sw / W, sh / H);
+    float ox = (sw - W * scale) * 0.5f;
+    float oy = (sh - H * scale) * 0.5f;
+    return (Vector2){(m.x - ox) / scale, (m.y - oy) / scale};
+}
+
 void inicializar_tablero(Juego *j) {
     int par[MAX_FILAS * MAX_COLS], total;
     if (j == NULL || j->dif < 0 || j->dif > 2) return;
@@ -112,7 +122,7 @@ static void voltear_carta(Juego *j, int f, int col) {
 }
 
 static void manejar_clic(Juego *j) {
-    Vector2 m = GetMousePosition();
+    Vector2 m = posicion_mouse();
     for (int f = 0; f < j->filas; f++) {
         for (int col = 0; col < j->cols; col++) {
             if (j->c[f][col].estado != 0) continue;
@@ -213,10 +223,13 @@ static void actualizar_partida(Juego *j) {
 void iniciar_juego(Juego *j) {
     if (j == NULL) return;
     *j = (Juego){.pantalla = PANT_MENU, .dif = 1, .jug = 1, .f1 = -1, .f2 = -1, .sonando = -1, .pausa = false};
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(W, H, "MemoteFutbol");
     InitAudioDevice();
     SetExitKey(KEY_NULL);
     SetTargetFPS(60);
+    j->canvas = LoadRenderTexture(W, H);
+    SetTextureFilter(j->canvas.texture, TEXTURE_FILTER_BILINEAR);
     cargar_sonidos(j);
     cargar_imagenes(j);
     cargar_ranking(&j->ranking);
@@ -227,6 +240,8 @@ void actualizar_juego(Juego *j) {
     if (j == NULL) return;
     if (IsKeyPressed(KEY_M) && !escribiendo_nombre(j))
         SetMasterVolume((j->mudo = !j->mudo) ? 0 : 1);
+    if ((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_F11)) && !escribiendo_nombre(j))
+        ToggleFullscreen();
     switch (j->pantalla) {
         case PANT_MENU: actualizar_menu(j); break;
         case PANT_RANKING: actualizar_ranking(j); break;
@@ -237,6 +252,7 @@ void actualizar_juego(Juego *j) {
 
 void cerrar_juego(Juego *j) {
     if (j == NULL) return;
+    UnloadRenderTexture(j->canvas);
     liberar_sonidos(j);
     liberar_imagenes(j);
     liberar_pila(&j->pila);

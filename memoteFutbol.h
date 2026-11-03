@@ -5,12 +5,12 @@
 #include <stdbool.h>
 #include "raylib.h"
 
-#define W 730
-#define H 540
-#define CW 110
-#define CH 100
-#define GAP 10
-#define TOP 70
+#define W 1000
+#define H 700
+#define CW 140
+#define CH 125
+#define GAP 12
+#define TOP 75
 #define MAX_FILAS 4
 #define MAX_COLS 6
 #define MAX_CONF 80
@@ -81,6 +81,7 @@ typedef struct {
     float t;
     bool pausa;
     Music ambiente;
+    RenderTexture2D canvas;
 } Juego;
 
 void iniciar_juego(Juego *j);
@@ -89,6 +90,7 @@ void cerrar_juego(Juego *j);
 void inicializar_tablero(Juego *j);
 int bonus_recursivo(int racha);
 Rectangle rect_carta(const Juego *j, int f, int col);
+Vector2 posicion_mouse(void);
 
 Wave generar_tono(float freq, float dur);
 void cargar_sonidos(Juego *j);

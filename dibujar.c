@@ -33,14 +33,14 @@ static void dibujar_fondo(void) {
     for (int i = 0; i < 10; i++)
         DrawRectangle(i * W / 10, 0, W / 10, H, (i % 2) ? claro : oscuro);
     DrawLine(W / 2, 0, W / 2, H, Fade(RAYWHITE, .2f));
-    DrawCircleLines(W / 2, H / 2, 80, Fade(RAYWHITE, .2f));
+    DrawCircleLines(W / 2, H / 2, 90, Fade(RAYWHITE, .2f));
 }
 
 static void dibujar_dorso(Rectangle d, int hover) {
     int cx = (int)(d.x + d.width / 2), cy = (int)(d.y + CH / 2);
     DrawRectangleRounded(d, .15f, 6, hover ? BLUE : DARKBLUE);
-    DrawEllipse(cx, cy, 28 * d.width / CW, 28, RAYWHITE);
-    DrawEllipse(cx, cy, 9 * d.width / CW, 9, BLACK);
+    DrawEllipse(cx, cy, 35 * d.width / CW, 35, RAYWHITE);
+    DrawEllipse(cx, cy, 12 * d.width / CW, 12, BLACK);
 }
 
 static void dibujar_cara(const Juego *j, const Carta *k, Rectangle d) {
@@ -50,10 +50,10 @@ static void dibujar_cara(const Juego *j, const Carta *k, Rectangle d) {
     t = j->img[k->par];
     DrawRectangleRounded(d, .15f, 6, (k->estado == 2) ? GOLD : RAYWHITE);
     if (t.id == 0) { 
-        if (d.width > CW * .7f) centrar_texto(NOMBRES[k->par], d, 18, BLACK);
+        if (d.width > CW * .7f) centrar_texto(NOMBRES[k->par], d, 20, BLACK);
         return;
     }
-    s = fminf((CW - 16.0f) / t.width, (CH - 16.0f) / t.height);
+    s = fminf((CW - 20.0f) / t.width, (CH - 20.0f) / t.height);
     iw = t.width * s * d.width / CW; 
     ih = t.height * s;
     DrawTexturePro(t, (Rectangle){0, 0, (float)t.width, (float)t.height},
@@ -65,7 +65,7 @@ static void dibujar_carta(const Juego *j, int f, int col) {
     const Carta *k = &j->c[f][col];
     Rectangle r = rect_carta(j, f, col), d;
     int hover = (k->estado == 0 && j->espera == 0 && !j->pausa &&
-                 CheckCollisionPointRec(GetMousePosition(), r));
+                 CheckCollisionPointRec(posicion_mouse(), r));
     float w = CW * fabsf(cosf(k->flip * PI)); 
     r.y -= hover * 5;
     r.x += sinf(k->shake * 1.5f) * k->shake * .3f;
@@ -88,39 +88,39 @@ static void dibujar_hud(const Juego *j) {
     if (j->jug == 1)
         DrawText(TextFormat("Intentos: %d   Tiempo: %ds   Puntos: %d   Racha: x%d   Mejor: %s",
                             j->intentos, (int)j->t, j->pts[0], j->racha,
-                            mejor ? TextFormat("%d", mejor) : "-"), 15, 8, 18, RAYWHITE);
+                            mejor ? TextFormat("%d", mejor) : "-"), 20, 10, 20, RAYWHITE);
     else
         DrawText(TextFormat("J1: %d   J2: %d   Turno: J%d   Racha: x%d",
-                            j->pts[0], j->pts[1], j->turno + 1, j->racha), 15, 8, 18, RAYWHITE);
-    DrawText("Z: deshacer   R: reiniciar   ESC: menu   P: pausa", 15, 36, 14, LIGHTGRAY);
+                            j->pts[0], j->pts[1], j->turno + 1, j->racha), 20, 10, 20, RAYWHITE);
+    DrawText("Z: deshacer   R: reiniciar   ESC: menu   P: pausa   F: pantalla completa", 20, 38, 16, LIGHTGRAY);
     
     DrawRectangle(0, 0, (int)(W * (j->t / 60.0f)), 5, GREEN);
 }
 
 static void dibujar_menu(const Juego *j) {
     const char *niv[] = {"1 - Facil (3x4)", "2 - Medio (4x4)", "3 - Dificil (4x6)"};
-    centrar_texto("MEMOTEFUTBOL", (Rectangle){0, 70, W, 60}, 56, GOLD);
+    centrar_texto("MEMOTEFUTBOL", (Rectangle){0, 90, W, 70}, 64, GOLD);
     for (int k = 0; k < 3; k++)
-        centrar_texto(niv[k], (Rectangle){0, 190 + k * 40, W, 36}, 26, (k == j->dif) ? GOLD : RAYWHITE);
-    centrar_texto(TextFormat("P - Jugadores: %d", j->jug), (Rectangle){0, 330, W, 36}, 26, RAYWHITE);
-    centrar_texto("T: ranking     M: sonido", (Rectangle){0, 410, W, 30}, 20, LIGHTGRAY);
-    centrar_texto("ENTER: jugar     ESC: salir", (Rectangle){0, 440, W, 30}, 20, LIGHTGRAY);
+        centrar_texto(niv[k], (Rectangle){0, 230 + k * 48, W, 40}, 28, (k == j->dif) ? GOLD : RAYWHITE);
+    centrar_texto(TextFormat("P - Jugadores: %d", j->jug), (Rectangle){0, 410, W, 40}, 28, RAYWHITE);
+    centrar_texto("T: ranking     M: sonido     F: pantalla completa", (Rectangle){0, 500, W, 30}, 22, LIGHTGRAY);
+    centrar_texto("ENTER: jugar     ESC: salir", (Rectangle){0, 545, W, 30}, 22, LIGHTGRAY);
 }
 
 static void dibujar_ranking(const Juego *j) {
     const char *niv[] = {"Facil", "Medio", "Dificil"};
     const NodoLista *p;
     int n = 0;
-    centrar_texto(TextFormat("RANKING - %s", niv[j->dif]), (Rectangle){0, 50, W, 50}, 40, GOLD);
+    centrar_texto(TextFormat("RANKING - %s", niv[j->dif]), (Rectangle){0, 60, W, 60}, 44, GOLD);
     for (p = j->ranking; p != NULL && n < TOP_RANKING; p = p->sig) {
         if (p->dif != j->dif) continue;
         centrar_texto(TextFormat("%d. %s - %d intentos", n + 1, p->nombre, p->intentos),
-                      (Rectangle){0, 140 + n * 45, W, 40}, 26, RAYWHITE);
+                      (Rectangle){0, 170 + n * 55, W, 45}, 28, RAYWHITE);
         n++;
     }
     if (n == 0)
-        centrar_texto("Todavia no hay partidas guardadas", (Rectangle){0, 200, W, 40}, 24, LIGHTGRAY);
-    centrar_texto("1/2/3: dificultad     ESC: volver", (Rectangle){0, H - 70, W, 30}, 20, LIGHTGRAY);
+        centrar_texto("Todavia no hay partidas guardadas", (Rectangle){0, 260, W, 40}, 26, LIGHTGRAY);
+    centrar_texto("1/2/3: dificultad     ESC: volver", (Rectangle){0, H - 75, W, 30}, 22, LIGHTGRAY);
 }
 
 static void dibujar_confetti(const Juego *j) {
@@ -138,14 +138,15 @@ static void dibujar_victoria(const Juego *j) {
     } else
         t1 = TextFormat("Ganaste en %d intentos y %ds%s", j->intentos, (int)j->t,
                         j->nuevo ? " - NUEVO RECORD!" : "");
-    DrawRectangle(0, H / 2 - 55, W, 110, Fade(BLACK, .8f));
-    centrar_texto(t1, (Rectangle){0, H / 2 - 55, W, 70}, 24, GOLD);
-    centrar_texto(t2, (Rectangle){0, H / 2 + 10, W, 40}, 18, RAYWHITE);
+    DrawRectangle(0, H / 2 - 65, W, 130, Fade(BLACK, .85f));
+    centrar_texto(t1, (Rectangle){0, H / 2 - 55, W, 60}, 28, GOLD);
+    centrar_texto(t2, (Rectangle){0, H / 2 + 15, W, 40}, 20, RAYWHITE);
 }
 
 void dibujar_juego(const Juego *j) {
     if (j == NULL) return;
-    BeginDrawing();
+
+    BeginTextureMode(j->canvas);
     dibujar_fondo();
     
     if (j->pantalla == PANT_MENU) dibujar_menu(j);
@@ -156,11 +157,25 @@ void dibujar_juego(const Juego *j) {
         
         if (j->pausa) {
             DrawRectangle(0, 0, W, H, Fade(BLACK, 0.8f));
-            DrawText("PAUSA", W/2 - 90, H/2 - 20, 60, RAYWHITE);
+            centrar_texto("PAUSA", (Rectangle){0, H / 2 - 35, W, 70}, 60, RAYWHITE);
         } else if (j->aciertos == j->filas * j->cols / 2) {
             dibujar_confetti(j);
             dibujar_victoria(j);
         }
     }
+    EndTextureMode();
+
+    float sw = (float)GetScreenWidth();
+    float sh = (float)GetScreenHeight();
+    float scale = fminf(sw / W, sh / H);
+    float ox = (sw - W * scale) * 0.5f;
+    float oy = (sh - H * scale) * 0.5f;
+
+    BeginDrawing();
+    ClearBackground(BLACK);
+    DrawTexturePro(j->canvas.texture,
+                   (Rectangle){0, 0, (float)j->canvas.texture.width, -(float)j->canvas.texture.height},
+                   (Rectangle){ox, oy, W * scale, H * scale},
+                   (Vector2){0, 0}, 0.0f, WHITE);
     EndDrawing();
 }
