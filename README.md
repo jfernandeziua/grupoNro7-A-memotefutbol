@@ -1,18 +1,18 @@
-# MemoteFutbol
+MemoteFutbol
 
 Juego de memoria con temática de fútbol, hecho en C con la biblioteca Raylib.
 Trabajo Integrador Grupal, Grupo Nro 7-A.
 
-## Integrantes
+Integrantes
 
 | Integrante | Usuario de GitHub | Módulos |
 |---|---|---|
-| (nombre) | @usuario | `memoteFutbol.h`, `audio.c` |
-| (nombre) | @usuario | `juego.c` |
-| (nombre) | @usuario | `archivos.c`, `estructuras.c` |
-| (nombre) | @usuario | `dibujar.c`, `main.c` |
+| Juan Cruz Fernandez | jfernandeziua | `memoteFutbol.h`, `audio.c`|
+| Nahuel Herrera | nahuel91218 | `juego.c` |
+| Joaquin Lozada | jlozada648-arch | `archivos.c`, `estructuras.c` |
+| Lautaro Barrionuevo | lautaro-barrionuevo | `dibujar.c`, `main.c` |
 
-## Cómo ejecutarlo
+Cómo ejecutarlo
 
 Requisitos: compilador `gcc`, `make` y Raylib.
 
@@ -25,15 +25,15 @@ make run
 
 Desde VS Code también funciona el botón de la extensión Code Runner (usa `make run`).
 
-## Controles
+Controles
 
 | Pantalla | Teclas |
 |---|---|
 | Menú | `1` `2` `3` dificultad, `P` jugadores, `T` ranking, `ENTER` jugar, `ESC` salir |
-| Partida | clic para voltear, `Z` deshacer, `R` reiniciar, `P` pausa, `ESC` menú |
+| Partida | clic para voltear, `Z` deshacer, `R` reiniciar, `P` pausa, `F` pantalla completa,`ESC` menú |
 | General | `M` silenciar, `F` / `F11` pantalla completa |
 
-## Estructura del proyecto
+Estructura del proyecto
 
 | Archivo | Contenido |
 |---|---|
@@ -46,7 +46,7 @@ Desde VS Code también funciona el botón de la extensión Code Runner (usa `mak
 | `dibujar.c` | Menú, cartas animadas, ranking y confetti |
 | `imagenes/` | Imágenes de las cartas |
 
-## Temas de la materia
+Temas de la materia
 
 | Tema | Dónde se aplica |
 |---|---|
@@ -61,7 +61,7 @@ Desde VS Code también funciona el botón de la extensión Code Runner (usa `mak
 | Recursividad | `bonus_recursivo()` |
 | Modularización | `.h` con guardas y 6 archivos `.c` |
 
-## Trabajo con Git
+Trabajo con Git
 
 - Una rama por módulo (`feature/core`, `feature/audio`, `feature/logica`, `feature/archivos`, `feature/interfaz`).
 - Nadie hace push directo a `main`: todo entra por pull request con revisión de un compañero.
