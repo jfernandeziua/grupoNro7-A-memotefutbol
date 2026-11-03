@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-/* Push: crea un nodo en el heap y lo pone arriba de todo. Devuelve 1 si pudo. */
 int apilar(NodoPila **tope, Movimiento m) {
     NodoPila *nuevo;
     if (tope == NULL) return 0;
@@ -15,7 +13,6 @@ int apilar(NodoPila **tope, Movimiento m) {
     return 1;
 }
 
-/* Pop: saca el nodo de arriba, copia su contenido en *m y libera el nodo. */
 int desapilar(NodoPila **tope, Movimiento *m) {
     NodoPila *aux;
     if (tope == NULL || *tope == NULL || m == NULL) return 0;
@@ -28,15 +25,9 @@ int desapilar(NodoPila **tope, Movimiento *m) {
 
 void liberar_pila(NodoPila **tope) {
     Movimiento descarte;
-    while (desapilar(tope, &descarte)) {
-        /* desapilar libera de a un nodo hasta que la pila queda vacia */
-    }
+    while (desapilar(tope, &descarte)) { }
 }
 
-/* ================= LISTA ENLAZADA: ranking ordenado ================= */
-
-/* Inserta ordenado por intentos (menor primero). Los empates quedan
-   despues de los que ya estaban. Devuelve 1 si pudo insertar. */
 int insertar_ranking(NodoLista **head, const char *nombre, int dif, int intentos) {
     NodoLista *nuevo, *ant = NULL, *act;
     if (head == NULL || nombre == NULL) return 0;
@@ -57,7 +48,6 @@ int insertar_ranking(NodoLista **head, const char *nombre, int dif, int intentos
     return 1;
 }
 
-/* Mejor marca de una dificultad (la lista esta ordenada). 0 si no hay. */
 int mejor_de(const NodoLista *head, int dif) {
     const NodoLista *p;
     for (p = head; p != NULL; p = p->sig)
@@ -75,9 +65,6 @@ void liberar_lista(NodoLista **head) {
     }
 }
 
-/* ================= COLA (FIFO): sonidos pendientes ================= */
-
-/* Enqueue: agrega al final. */
 int encolar(Cola *q, int tipo) {
     NodoCola *nuevo;
     if (q == NULL) return 0;
@@ -85,13 +72,12 @@ int encolar(Cola *q, int tipo) {
     if (nuevo == NULL) return 0;
     nuevo->tipo = tipo;
     nuevo->sig = NULL;
-    if (q->final == NULL) q->frente = nuevo;   /* cola vacia */
+    if (q->final == NULL) q->frente = nuevo;
     else q->final->sig = nuevo;
     q->final = nuevo;
     return 1;
 }
 
-/* Dequeue: saca del frente. Devuelve -1 si la cola esta vacia. */
 int desencolar(Cola *q) {
     NodoCola *aux;
     int tipo;
@@ -105,7 +91,5 @@ int desencolar(Cola *q) {
 }
 
 void liberar_cola(Cola *q) {
-    while (desencolar(q) >= 0) {
-        /* vacia la cola liberando cada nodo */
-    }
+    while (desencolar(q) >= 0) { }
 }
